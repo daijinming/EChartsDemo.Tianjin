@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="~/Content/echarts.min.js"></script>
+    <script src="~/Content/Scripts/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 600px;height:400px;"></div>
+
+
+
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        myChart.showLoading();
+
+        $.get('Content/西青区.json', function (geoJson) {
+            echarts.registerMap('tianjin', geoJson);
+            myChart.hideLoading();
+
+            var geoCoordMap = {
+                "杨柳青镇": [117.00, 39.13425],
+                "辛口镇": [116.97, 39.08],
+                "张家窝镇": [117.04, 39.05],
+                "会展中心": [114.067693, 22.540471],
+                "大剧院": [114.114836, 22.548482],
+                "罗湖": [114.125185, 22.531858],
+                "布吉": [114.128059, 22.608082],
+                "黄贝岭": [114.143366, 22.552654],
+                "车公庙": [114.031761, 22.54244],
+                "后海": [113.947033, 22.523345],
+
+            }
+
+            var convertData = function (data) {
+                var res = [];
+                for (var i = 0; i < data.length; i++) {
+                    var geoCoord = geoCoordMap[data[i].name];
+                    if (geoCoord) {
+                        res.push({
+                            name: data[i].name,
+                            symbol: data[i].symbol,
+                            value: geoCoord.concat(data[i].value)
+                        });
+                    }
+                }
+                return res;
+            };
+
+            option = {
+
+                title: {
+                    text: '天津市西青区',
+                    subtext: '2016年8月份',
+                    x: 'center',
+                    textStyle: {
+                        color: '#ccc'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return params.name + ' : ' + params.value[2];
+                    }
+                },
+                legend: {
+                    orient: 'vertical',
+                    y: 'bottom',
+                    x: 'right',
+                    data: ['pm2.5'],
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                geo: {
+                    map: 'tianjin',
+                    label: {
+                        normal: {
+                            show: true
+                        },
+
+                    },
+                    itemStyle: {
+                        normal: {
+
+                            borderColor: '#111'
+                        },
+                        emphasis: {
+                            areaColor: 'yellow'
+                        }
+                    }
+                },
+                series: [{
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    data: convertData([{
+                        name: "杨柳青镇",
+                        symbol: 'pin',
+                        value: 149826
+                    }, {
+                        name: "辛口镇",
+                        symbol: 'pin',
+                        value: 111456
+                    },
+
+                        {
+                            name: "张家窝镇",
+                            symbol: 'pin',
+                            value: 108150
+                        }, {
+                            name: "会展中心",
+                            symbol: 'pin',
+                            value: 85693
+                        }, {
+                            name: "大剧院",
+                            symbol: 'pin',
+                            value: 72298
+                        },
+
+                        {
+                            name: "罗湖",
+                            symbol: 'pin',
+                            value: 72116
+                        }, {
+                            name: "黄贝岭",
+                            symbol: 'pin',
+                            value: 68372
+                        }, {
+                            name: "车公庙",
+                            symbol: 'pin',
+                            value: 61400
+                        }, {
+                            name: "后海",
+                            symbol: 'pin',
+                            value: 50551
+                        }, {
+                            name: "布吉",
+                            symbol: 'pin',
+                            value: 50010
+                        }
+
+                    ]),
+
+                    symbolSize: 50,
+                    label: {
+                        normal: {
+                            show: true,
+                            formatter: '{b}',
+                            textStyle: {
+                                color: '#fff'
+                            }
+
+                        },
+                        emphasis: {
+                            textStyle: {
+                                color: '#000',
+                                fontWeight: 'bold',
+                                fontSize: 14
+                            }
+
+                        }
+
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: 'green',
+                            borderWidth: 0,
+                            borderType: 'solid'
+                        },
+                        emphasis: {
+                            color: '#FFEA77',
+                            borderColor: 'red',
+                            borderWidth: 5,
+
+                        }
+                    }
+                }]
+            };
+
+            myChart.setOption(option);
+
+
+        });
+
+
+    </script>
+</body>
+</html>
